@@ -1,4 +1,4 @@
-// backend/src/middleware/auth.js
+// src/middleware/auth.js
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key';
 

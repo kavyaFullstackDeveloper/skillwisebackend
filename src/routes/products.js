@@ -1,4 +1,4 @@
-// backend/src/routes/products.js
+// src/routes/products.js
 const express = require('express');
 const multer = require('multer');
 const { streamToJsonArray } = require('../utils/csvHelpers');
@@ -10,7 +10,7 @@ const fs = require('fs');
 const path = require('path');
 const { requireAuth } = require('../middleware/auth');
 
-// apply migrations on boot (synchronously)
+// apply migrations on boot
 try {
   const migrations = fs.readFileSync(path.join(__dirname, '..', 'migrations.sql'), 'utf8');
   db.exec(migrations);
@@ -33,12 +33,12 @@ function buildFilters(query) {
     where.push('status = ?');
     params.push(query.status);
   }
-  const whereClause = where.length ? ' WHERE ' + where.join(' AND ') : '';
-  return { whereClause, params };
+  return { whereClause: where.length ? ' WHERE ' + where.join(' AND ') : '', params };
 }
 
 /**
  * GET /api/products
+ * Server-side pagination & optional filtering
  */
 router.get('/', async (req, res) => {
   try {
@@ -73,7 +73,7 @@ router.get('/', async (req, res) => {
 });
 
 /**
- * GET /api/products/search
+ * GET /api/products/search?name=abc
  */
 router.get('/search', async (req, res) => {
   try {
@@ -101,6 +101,7 @@ router.get('/search', async (req, res) => {
 
 /**
  * GET /api/products/export
+ * returns CSV (protected)
  */
 router.get('/export', requireAuth, async (req, res) => {
   try {
@@ -119,7 +120,7 @@ router.get('/export', requireAuth, async (req, res) => {
 });
 
 /**
- * POST /api/products/import
+ * POST /api/products/import (protected)
  */
 router.post('/import', requireAuth, upload.single('file'), async (req, res) => {
   try {
@@ -164,7 +165,7 @@ router.post('/import', requireAuth, upload.single('file'), async (req, res) => {
 });
 
 /**
- * PUT /api/products/:id
+ * PUT /api/products/:id (protected)
  */
 router.put('/:id', requireAuth, async (req, res) => {
   try {
@@ -221,7 +222,7 @@ router.get('/:id/history', async (req, res) => {
 });
 
 /**
- * DELETE /api/products/:id
+ * DELETE /api/products/:id (protected)
  */
 router.delete('/:id', requireAuth, async (req, res) => {
   try {

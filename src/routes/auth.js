@@ -1,3 +1,4 @@
+// src/routes/auth.js
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -5,8 +6,7 @@ const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key';
 
-// Example single user (for assignment/demo). You may replace with DB-backed users.
-// Password is hashed for demonstration: plain password: "password123"
+// Demo user (assignment). For production, use DB-backed users.
 const demoUser = {
   id: 1,
   username: 'admin',

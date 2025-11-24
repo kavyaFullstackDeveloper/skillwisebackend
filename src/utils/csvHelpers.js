@@ -1,4 +1,4 @@
-// backend/src/utils/csvHelpers.js
+// src/utils/csvHelpers.js
 const csv = require('fast-csv');
 
 function streamToJsonArray(readStream) {
