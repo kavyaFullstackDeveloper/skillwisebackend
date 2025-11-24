@@ -1,8 +1,9 @@
+// backend/src/middleware/auth.js
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key';
 
 function requireAuth(req, res, next) {
-  const authHeader = req.headers?.authorization;
+  const authHeader = req.headers && req.headers.authorization;
   if (!authHeader) return res.status(401).json({ error: 'Authorization required' });
 
   const parts = authHeader.split(' ');

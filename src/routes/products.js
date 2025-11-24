@@ -1,3 +1,4 @@
+// backend/src/routes/products.js
 const express = require('express');
 const multer = require('multer');
 const { streamToJsonArray } = require('../utils/csvHelpers');
@@ -9,12 +10,14 @@ const fs = require('fs');
 const path = require('path');
 const { requireAuth } = require('../middleware/auth');
 
-// apply migrations on boot
-const migrations = fs.readFileSync(path.join(__dirname, '..', 'migrations.sql'), 'utf8');
-db.exec(migrations, (err) => {
-  if (err) console.error('Migration error:', err);
-  else console.log('Migrations applied.');
-});
+// apply migrations on boot (synchronously)
+try {
+  const migrations = fs.readFileSync(path.join(__dirname, '..', 'migrations.sql'), 'utf8');
+  db.exec(migrations);
+  console.log('Migrations applied.');
+} catch (err) {
+  console.error('Migration error:', err);
+}
 
 /**
  * Helper: build where clause and params from query filters
@@ -30,13 +33,12 @@ function buildFilters(query) {
     where.push('status = ?');
     params.push(query.status);
   }
-  return { whereClause: where.length ? ' WHERE ' + where.join(' AND ') : '', params };
+  const whereClause = where.length ? ' WHERE ' + where.join(' AND ') : '';
+  return { whereClause, params };
 }
 
 /**
  * GET /api/products
- * Server-side pagination & optional filtering
- * Query params: page, limit, category, sort (e.g. stock_desc or name_asc)
  */
 router.get('/', async (req, res) => {
   try {
@@ -44,10 +46,8 @@ router.get('/', async (req, res) => {
     const limit = Math.max(1, Number(req.query.limit) || 10);
     const offset = (page - 1) * limit;
 
-    // filters
     const { whereClause, params } = buildFilters(req.query);
 
-    // sorting
     let orderBy = 'id DESC';
     if (req.query.sort) {
       const s = req.query.sort;
@@ -73,7 +73,7 @@ router.get('/', async (req, res) => {
 });
 
 /**
- * GET /api/products/search?name=abc&page=1&limit=10
+ * GET /api/products/search
  */
 router.get('/search', async (req, res) => {
   try {
@@ -101,13 +101,12 @@ router.get('/search', async (req, res) => {
 
 /**
  * GET /api/products/export
- * returns CSV (protected)
  */
 router.get('/export', requireAuth, async (req, res) => {
   try {
     const rows = await allAsync('SELECT name,unit,category,brand,stock,status,image FROM products ORDER BY id ASC');
     res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', 'attachment; filename=\"products_export.csv\"');
+    res.setHeader('Content-Disposition', 'attachment; filename="products_export.csv"');
 
     const csvStream = csv.format({ headers: true });
     csvStream.pipe(res);
@@ -120,7 +119,7 @@ router.get('/export', requireAuth, async (req, res) => {
 });
 
 /**
- * POST /api/products/import (protected)
+ * POST /api/products/import
  */
 router.post('/import', requireAuth, upload.single('file'), async (req, res) => {
   try {
@@ -165,7 +164,7 @@ router.post('/import', requireAuth, upload.single('file'), async (req, res) => {
 });
 
 /**
- * PUT /api/products/:id (protected)
+ * PUT /api/products/:id
  */
 router.put('/:id', requireAuth, async (req, res) => {
   try {
@@ -222,7 +221,7 @@ router.get('/:id/history', async (req, res) => {
 });
 
 /**
- * DELETE /api/products/:id (protected)
+ * DELETE /api/products/:id
  */
 router.delete('/:id', requireAuth, async (req, res) => {
   try {

@@ -1,40 +1,48 @@
-const sqlite3 = require('sqlite3').verbose();
+// backend/src/db.js
 const path = require('path');
+const Database = require('better-sqlite3');
 
 const DB_FILE = process.env.DB_FILE || path.join(__dirname, '..', 'data.sqlite');
 
-const db = new sqlite3.Database(DB_FILE, (err) => {
-  if (err) {
-    console.error('Could not open DB', err);
-  } else {
-    console.log('Connected to SQLite:', DB_FILE);
-  }
-});
+const db = new Database(DB_FILE);
 
+// enable foreign keys
+db.pragma('foreign_keys = ON');
+
+// helper wrappers that return promises (keeps your route code mostly unchanged)
 function runAsync(sql, params = []) {
   return new Promise((resolve, reject) => {
-    db.run(sql, params, function (err) {
-      if (err) reject(err);
-      else resolve({ id: this.lastID, changes: this.changes });
-    });
+    try {
+      const stmt = db.prepare(sql);
+      const info = stmt.run(...(Array.isArray(params) ? params : [params]));
+      resolve({ id: info.lastInsertRowid || info.lastInsertRowid === 0 ? info.lastInsertRowid : info.lastInsertROWID, changes: info.changes });
+    } catch (err) {
+      reject(err);
+    }
   });
 }
 
 function allAsync(sql, params = []) {
   return new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
-      if (err) reject(err);
-      else resolve(rows);
-    });
+    try {
+      const stmt = db.prepare(sql);
+      const rows = stmt.all(...(Array.isArray(params) ? params : [params]));
+      resolve(rows);
+    } catch (err) {
+      reject(err);
+    }
   });
 }
 
 function getAsync(sql, params = []) {
   return new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
-      if (err) reject(err);
-      else resolve(row);
-    });
+    try {
+      const stmt = db.prepare(sql);
+      const row = stmt.get(...(Array.isArray(params) ? params : [params]));
+      resolve(row);
+    } catch (err) {
+      reject(err);
+    }
   });
 }
 
