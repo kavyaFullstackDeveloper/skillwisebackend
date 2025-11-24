@@ -1,0 +1,25 @@
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE IF NOT EXISTS products (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL COLLATE NOCASE,
+  unit TEXT NOT NULL,
+  category TEXT NOT NULL,
+  brand TEXT,
+  stock INTEGER DEFAULT 0,
+  status TEXT DEFAULT 'In Stock',
+  image TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(name)
+);
+
+CREATE TABLE IF NOT EXISTS inventory_logs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  product_id INTEGER NOT NULL,
+  old_stock INTEGER,
+  new_stock INTEGER,
+  changed_by TEXT,
+  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE
+);

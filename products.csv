@@ -1,0 +1,11 @@
+name,unit,category,brand,stock,status,image
+Apple,kg,Fruits,FreshFarm,20,In Stock,https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=200&q=60&auto=format&fit=crop
+Banana,dozen,Fruits,FreshFarm,0,Out of Stock,https://images.unsplash.com/photo-1574226516831-e1dff420e43e?w=200&q=60&auto=format&fit=crop
+Milk,ltr,Dairy,Amul,50,In Stock,https://images.unsplash.com/photo-1580910051074-7ca36d23f90f?w=200&q=60&auto=format&fit=crop
+Bread,pcs,Bakery,Britannia,15,In Stock,https://images.unsplash.com/photo-1542281286-9e0a16bb7366?w=200&q=60&auto=format&fit=crop
+Eggs,dozen,Poultry,LocalFarm,0,Out of Stock,https://images.unsplash.com/photo-1511689660979-3c2b61d72a3a?w=200&q=60&auto=format&fit=crop
+Orange,kg,Fruits,NatureFresh,35,In Stock,https://images.unsplash.com/photo-1502741126161-b048400d6f5d?w=200&q=60&auto=format&fit=crop
+Butter,pack,Dairy,Amul,8,In Stock,https://images.unsplash.com/photo-1617191511967-0a4b8b39a05e?w=200&q=60&auto=format&fit=crop
+Rice,kg,Grains,IndiaGate,100,In Stock,https://images.unsplash.com/photo-1585238342028-8b8fbc1b1c6d?w=200&q=60&auto=format&fit=crop
+Sugar,kg,Groceries,Tata,5,In Stock,https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=200&q=60&auto=format&fit=crop
+Cheese,pack,Dairy,Amul,0,Out of Stock,https://images.unsplash.com/photo-1572448862520-1e431fd0c9d6?w=200&q=60&auto=format&fit=crop
