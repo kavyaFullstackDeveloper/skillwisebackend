@@ -1,49 +1,34 @@
-const Database = require("better-sqlite3");
-const path = require("path");
+const sqlite3 = require('sqlite3').verbose();
+const { open } = require('sqlite');
+const path = require('path');
 
-const DB_FILE = process.env.DB_FILE || path.join(__dirname, "..", "data.sqlite");
+let db;
 
-const db = new Database(DB_FILE);
-
-// Helpers
-function runAsync(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    try {
-      const stmt = db.prepare(sql);
-      const info = stmt.run(params);
-      resolve(info);
-    } catch (err) {
-      reject(err);
-    }
+async function initDB() {
+  db = await open({
+    filename: path.join(__dirname, '..', 'data.sqlite'),
+    driver: sqlite3.Database
   });
+  return db;
 }
 
-function allAsync(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    try {
-      const stmt = db.prepare(sql);
-      const rows = stmt.all(params);
-      resolve(rows);
-    } catch (err) {
-      reject(err);
-    }
-  });
+async function runAsync(sql, params = []) {
+  const database = db || await initDB();
+  return database.run(sql, params);
 }
 
-function getAsync(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    try {
-      const stmt = db.prepare(sql);
-      const row = stmt.get(params);
-      resolve(row);
-    } catch (err) {
-      reject(err);
-    }
-  });
+async function allAsync(sql, params = []) {
+  const database = db || await initDB();
+  return database.all(sql, params);
+}
+
+async function getAsync(sql, params = []) {
+  const database = db || await initDB();
+  return database.get(sql, params);
 }
 
 module.exports = {
-  db,
+  initDB,
   runAsync,
   allAsync,
   getAsync,
